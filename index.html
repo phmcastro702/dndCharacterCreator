@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTextExtractor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+
+
+        <h1>D&D Character "Creator"</h1>
+
+        <br>
+
+        <div class="form-style-5">
+            <form id="rpgInfoForm">
+                <fieldset>
+                    <legend><span class="number">1</span> Character Info </legend>
+                    <label for="dndClass">Class:</label>
+                    <select id="dndClass" name="classField">
+                        <optgroup label="DnD Classes" class="dndClassOptGroup">
+                            <option value="Example">Example</option>
+                        </optgroup>
+                    </select>
+                </fieldset>
+                <input type="submit" value="Get character info" id="inputSubmit" />
+            </form>
+        </div>
+
+        <br>
+
+
+        <h2 id="dataTitle">
+            RPG data
+        </h2>
+
+        <p class="rpg-info">
+            This is where i'm gonna throw the data i fetch
+        </p>
+
+    </main>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

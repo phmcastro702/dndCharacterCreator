@@ -9,38 +9,56 @@
 </head>
 
 <body>
+
+    <header>
+        <h1>D&D Character "Creator"</h1>
+    </header>
+
     <main>
 
-
-        <h1>D&D Character "Creator"</h1>
-
-        <br>
-
         <div class="form-style-5">
-            <form id="rpgInfoForm">
+            <form id="optsForm" class="character-form">
+                <!-- DnD Race selection -->
                 <fieldset>
-                    <legend><span class="number">1</span> Character Info </legend>
-                    <label for="dndClass">Class:</label>
-                    <select id="dndClass" name="classField">
-                        <optgroup label="DnD Classes" class="dndClassOptGroup">
-                            <option value="Example">Example</option>
+                    <legend><span class="number"></span> Character Builder </legend>
+                    <label for="characterNameInput">Name:</label>
+                    <input id="characterNameInput" type="text" placeholder="Lord Farquad">
+                    <label for="dndRace">Race:</label>
+                    <select id="dndRace" name="races">
+                        <optgroup label="DnD Races" class="raceOptGroup">
+                            <option value="Example">Example Race</option>
                         </optgroup>
                     </select>
                 </fieldset>
+                <!-- DnD Class selection -->
+                <fieldset>
+                    <label for="dndClass">Class:</label>
+                    <select id="dndClass" name="Classes">
+                        <optgroup label="DnD Classes" class="classOptGroup">
+                            <option value="Example">Example Class</option>
+                        </optgroup>
+                    </select>
+                </fieldset>
+
                 <input type="submit" value="Get character info" id="inputSubmit" />
             </form>
+            <br>
+            <p id="error-text"></p>
         </div>
 
         <br>
 
+        <div id="characterMainInfo">
+            <h1 id="characterName"></h1>
+        </div>
 
-        <h2 id="dataTitle">
-            RPG data
-        </h2>
-
-        <p class="rpg-info">
-            This is where i'm gonna throw the data i fetch
-        </p>
+        <div id="character-data">
+            <div class="data-category" id="generic-category">
+                <h2 class="data-title"></h2>
+                <p id="some-info">
+                </p>
+            </div>
+        </div>
 
     </main>
 

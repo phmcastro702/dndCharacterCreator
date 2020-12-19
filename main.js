@@ -1,6 +1,10 @@
-let userRpgInfoForm = document.getElementById('rpgInfoForm');
+let characterBuilderForm = document.getElementById('optsForm');
 let finalSubmitBtn = document.getElementById('inputSubmit');
-let dndClassOptGroup = document.querySelector('.dndClassOptGroup');
+let allOptGroups = document.querySelectorAll('optgroup');
+let characterCategory = document.querySelector('.data-category');
+let displayedCategories = [];
+let characterNameInput = document.getElementById('characterNameInput');
+let characterNameTitle = document.getElementById('characterName');
 //let dndClassSelect = document.getElementById('dndClass');
 
 let getDndInfoUrl = 'https://www.dnd5eapi.co/api/';
@@ -8,46 +12,52 @@ let getDndInfoUrl = 'https://www.dnd5eapi.co/api/';
 
 
 
-finalSubmitBtn.addEventListener('submit', (e) => SubmitCharacterInfoForm(e, `classes/${dndClassOptGroup.parentNode.value}`));
+finalSubmitBtn.addEventListener('submit', (e) => SubmitCharacterInfoForm(e));
 
 // so user can get rpg class info also by hitting enter
-userRpgInfoForm.addEventListener('submit', (e) => SubmitCharacterInfoForm(e, `classes/${dndClassOptGroup.parentNode.value}`));
+characterBuilderForm.addEventListener('submit', (e) => SubmitCharacterInfoForm(e));
 
 
-function SubmitCharacterInfoForm(event, endpoint) {
+function SubmitCharacterInfoForm(event) {
     event.preventDefault();
-    getRPGInfo(endpoint);
+    for (let category of allOptGroups) {
+        getRPGInfo(`${category.parentNode.name + '/' + category.parentNode.value}`);
+    }
+    characterNameTitle.textContent = characterNameInput.value !== '' ? characterNameInput.value : characterNameTitle.textContent;
 }
 
-function PopulateClassOptGroup() {
-    let classArr = [];
+function PopulateOptGroups() {
 
-    fetch(`${getDndInfoUrl}classes/`)
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
+    let categories = [];
 
-            console.log(data);
-            classArr = data['results'];
-            AddClassOptions(classArr);
-        })
-        .catch(() => {
-            console.log('An error successfully ocurred!');
-        });
+    for (let optGroup of [...allOptGroups]) {
+        fetch(`${getDndInfoUrl + optGroup.parentNode.name}/`)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+
+                console.log(data);
+                categories = data['results'];
+                AddOptsToOptGroups(categories, optGroup);
+            })
+            .catch(() => {
+                console.log('An error successfully ocurred!');
+            });
+    }
 
 
 }
 
-function AddClassOptions(classNames) {
+function AddOptsToOptGroups(categoriesNames, optGroup) {
 
-    for (let dndClass of classNames) {
+    for (let category of categoriesNames) {
 
         let opt = document.createElement('option');
-        opt.value = dndClass['index'];
-        opt.textContent = dndClass['name'];
+        opt.value = category['index'];
+        opt.textContent = category['name'];
 
-        dndClassOptGroup.appendChild(opt);
+        optGroup.appendChild(opt);
 
     }
 
@@ -56,8 +66,7 @@ function AddClassOptions(classNames) {
 
 function getRPGInfo(customEndpoint) {
     if (customEndpoint === '') {
-        displayInfo('please input some class from the D&D universe');
-        return;
+        displayError('please fill in all the options');
     }
 
     let requestURL = getDndInfoUrl + `${customEndpoint}/`;
@@ -68,17 +77,53 @@ function getRPGInfo(customEndpoint) {
         })
         .then((data) => {
             console.log(data);
-            displayInfo(JSON.stringify(data, null, 4));
+            displayNewCategory(customEndpoint.split('/')[0], JSON.stringify(data, null, 4));
         })
         .catch(() => {
             console.log('An error successfully ocurred!');
         });
 }
 
-function displayInfo(infoData) {
-    let infoTxt = document.querySelector('.rpg-info');
+function displayNewCategory(category, info) {
 
-    infoTxt.textContent = infoData;
+    if (displayedCategories.length <= 0) {
+        let newCategory = characterCategory.cloneNode(true);
+
+        newCategory.id = category;
+
+        newCategory.firstElementChild.textContent = category;
+        newCategory.lastElementChild.textContent = info;
+
+        characterCategory.parentNode.appendChild(newCategory);
+        displayedCategories.push(newCategory);
+    }
+
+
+    let displayedCategoriesNames = displayedCategories.map((c) => c.id);
+
+
+    if (displayedCategoriesNames.includes(category)) {
+        displayedCategories.find(c => c.id === category).lastElementChild.textContent = info;
+        return;
+    }
+    else {
+        let newCategory = characterCategory.cloneNode(true);
+
+        newCategory.id = category;
+
+        newCategory.firstElementChild.textContent = category;
+        newCategory.lastElementChild.textContent = info;
+
+        characterCategory.parentNode.appendChild(newCategory);
+        displayedCategories.push(newCategory);
+    }
+
+
 }
 
-PopulateClassOptGroup();
+function displayError(message) {
+    errorTxt = document.getElementById('error-text');
+    errorTxt.textContent = message;
+}
+
+PopulateOptGroups();

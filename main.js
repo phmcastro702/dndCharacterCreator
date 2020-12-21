@@ -31,14 +31,14 @@ function PopulateOptGroups() {
     let categories = [];
 
     for (let optGroup of [...allOptGroups]) {
-        fetch(`${getDndInfoUrl + optGroup.parentNode.name}/`)
+        fetch(`${getDndInfoUrl + optGroup.parentNode.name}`)
             .then((response) => {
                 return response.json();
             })
             .then((data) => {
 
                 console.log(data);
-                categories = data['results'];
+                categories = data;
                 AddOptsToOptGroups(categories, optGroup);
             })
             .catch(() => {
@@ -49,9 +49,22 @@ function PopulateOptGroups() {
 
 }
 
-function AddOptsToOptGroups(categoriesNames, optGroup) {
+function AddOptsToOptGroups(jsonData, optGroup) {
 
-    for (let category of categoriesNames) {
+    if (!Object.keys(jsonData).includes('results'))
+    {
+        for (let atribute of Object.keys(jsonData))
+        {
+            let opt = document.createElement('option');
+            opt.value = atribute;
+            opt.textContent = atribute;
+
+            optGroup.appendChild(opt);
+        }
+        return;
+    }
+
+    for (let category of jsonData['results']) {
 
         let opt = document.createElement('option');
         opt.value = category['index'];
@@ -69,7 +82,9 @@ function getRPGInfo(customEndpoint) {
         displayError('please fill in all the options');
     }
 
-    let requestURL = getDndInfoUrl + `${customEndpoint}/`;
+    let requestURL = getDndInfoUrl + `${customEndpoint}`;
+
+    console.log(requestURL);
 
     fetch(requestURL)
         .then((response) => {
